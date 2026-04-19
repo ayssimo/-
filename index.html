@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI assistant for overcoming fear</title>
+
+<style>
+body{
+font-family: Arial;
+background:#cfeeff;
+margin:0;
+padding:20px;
+}
+
+h1{text-align:center;}
+
+#chat{
+background:#f5efe6;
+height:400px;
+overflow-y:auto;
+padding:15px;
+border-radius:12px;
+margin-bottom:10px;
+}
+
+.user{
+background:#b8f2d6;
+padding:8px;
+margin:8px;
+border-radius:10px;
+text-align:right;
+}
+
+.ai{
+background:white;
+padding:8px;
+margin:8px;
+border-radius:10px;
+}
+
+input{
+width:75%;
+padding:10px;
+border-radius:10px;
+border:none;
+}
+
+button{
+padding:10px;
+border-radius:10px;
+border:none;
+background:#7cc6ff;
+cursor:pointer;
+}
+
+#results{
+margin-top:20px;
+background:#f5efe6;
+padding:15px;
+border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>AI assistant for overcoming fear</h1>
+
+<div id="chat"></div>
+
+<input id="input" placeholder="Write in English...">
+<button onclick="send()">Send</button>
+<button onclick="showResults()">Show results</button>
+
+<div id="results"></div>
+
+<script>
+
+async function send(){
+
+let text = document.getElementById("input").value;
+if(!text) return;
+
+let chat = document.getElementById("chat");
+
+chat.innerHTML += "<div class='user'>"+text+"</div>";
+
+document.getElementById("input").value="";
+
+try {
+
+const res = await fetch("/api/chat", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+message: text,
+mode: "chat"
+})
+});
+
+const data = await res.json();
+
+chat.innerHTML += "<div class='ai'>"+data.reply+"</div>";
+
+} catch (err) {
+chat.innerHTML += "<div class='ai'>Error: no response</div>";
+}
+
+chat.scrollTop = chat.scrollHeight;
+}
+
+
+
+async function showResults(){
+
+try {
+
+const res = await fetch("/api/chat", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+message: "",
+mode: "results"
+})
+});
+
+const data = await res.json();
+
+document.getElementById("results").innerHTML =
+"<div class='ai'>"+data.reply+"</div>";
+
+} catch (err) {
+document.getElementById("results").innerHTML =
+"<div class='ai'>Error: no response</div>";
+}
+
+}
+
+</script>
+
+</body>
+</html>
