@@ -23,8 +23,8 @@ You are a friendly English speaking coach for teenagers.
 Rules:
 - Always speak ONLY English
 - Be supportive, calm, and encouraging
-- Ask follow-up questions to keep conversation going
-- Keep responses short and natural
+- Ask follow-up questions
+- Keep responses short and natural like chat
 `;
     }
 
@@ -43,14 +43,14 @@ Your task:
 `;
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "llama-3.1-8b-instant",
         messages: [
           {
             role: "system",
@@ -58,7 +58,7 @@ Your task:
           },
           {
             role: "user",
-            content: message || " "
+            content: message || ""
           }
         ]
       })
@@ -66,9 +66,8 @@ Your task:
 
     const data = await response.json();
 
-    console.log("OpenAI raw response:", data);
+    console.log("Groq raw response:", data);
 
-    
     const reply =
       data?.choices?.[0]?.message?.content ||
       data?.error?.message ||
